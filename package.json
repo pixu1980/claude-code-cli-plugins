@@ -1,0 +1,22 @@
+{
+  "name": "claude-code-cli-plugins",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Monorepo for Claude Code CLI plugins",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/pixu1980/claude-code-cli-plugins.git"
+  },
+  "homepage": "https://github.com/pixu1980/claude-code-cli-plugins#readme",
+  "bugs": {
+    "url": "https://github.com/pixu1980/claude-code-cli-plugins/issues"
+  },
+  "scripts": {
+    "release": "node scripts/release.mjs",
+    "release:dry": "node scripts/release.mjs --dry-run"
+  },
+  "devDependencies": {
+    "commit-and-tag-version": "13.1.2"
+  }
+}
