@@ -1,0 +1,15 @@
+{
+  "name": "claude-code-cli-plugins",
+  "owner": {
+    "name": "Emiliano Pisu"
+  },
+  "description": "Personal collection of Claude Code CLI plugins.",
+  "plugins": [
+    {
+      "name": "claude-statusline",
+      "source": "./packages/claude-statusline",
+      "description": "Adaptive, width-aware statusline for Claude Code — project path, git branch/status, model, effort, and context usage with gradient colors.",
+      "author": "Emiliano Pisu"
+    }
+  ]
+}
