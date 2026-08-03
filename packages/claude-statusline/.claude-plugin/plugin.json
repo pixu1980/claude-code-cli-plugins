@@ -1,0 +1,10 @@
+{
+  "name": "claude-statusline",
+  "version": "0.1.0",
+  "description": "Adaptive, width-aware statusline for Claude Code — project path, git branch/status, model, effort, and context usage with gradient colors.",
+  "author": "Emiliano Pisu",
+  "license": "MIT",
+  "components": {
+    "skills": ["./skills"]
+  }
+}

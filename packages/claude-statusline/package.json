@@ -1,0 +1,12 @@
+{
+  "name": "claude-statusline",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Adaptive, width-aware statusline for Claude Code.",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/pixu1980/claude-code-cli-plugins.git",
+    "directory": "packages/claude-statusline"
+  }
+}
