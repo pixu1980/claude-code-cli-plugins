@@ -6,11 +6,12 @@
 # On resize the TUI redraws and re-runs this script, so the tier recomputes live.
 #
 # Degradation ladder (richest first — the first form that fits $COLUMNS wins):
-#   1  P: Projects/my-app › B: main S: !1 › M: Opus 4.8 (1M context) E: xHigh › C: 150k/1M (15%)
-#   2  P: my-app › B: main S: !1 › M: Opus 4.8 E: xHigh › C: 150k/1M (15%)
-#   3  my-app | main !1 | Opus 4.8 - xHigh | 150k/1M (15%)
-#   4  my-app | main | Opus 4.8 - xHigh | 150k/1M (15%)
-#   5  my-app | Opus 4.8 | 150k/1M (15%)          (floor)
+#   1  Project: Projects/my-app › Branch: main Status: !1 › Model: Opus 4.8 (1M context) Effort: xHigh › Context: 150k/1M (15%)
+#   2  P: Projects/my-app › B: main S: !1 › M: Opus 4.8 (1M context) E: xHigh › C: 150k/1M (15%)
+#   3  P: my-app › B: main S: !1 › M: Opus 4.8 E: xHigh › C: 150k/1M (15%)
+#   4  my-app | main !1 | Opus 4.8 - xHigh | 150k/1M (15%)
+#   5  my-app | main | Opus 4.8 - xHigh | 150k/1M (15%)
+#   6  my-app | Opus 4.8 | 150k/1M (15%)          (floor)
 #
 # Reads the Claude Code JSON payload on stdin (schema: https://code.claude.com/docs/en/statusline.md).
 
@@ -124,7 +125,7 @@ if [ -n "$max_tok" ] && [ "$max_tok" != "0" ]; then
 fi
 
 # ── Build one variant. Sets COLORED (with ANSI) and PLAIN (for width measurement). ──
-# Args: STYLE(lab|min)  PATH(full|base)  MODEL(full|short)  WANT_STATUS(0|1)  WANT_EFFORT(0|1)
+# Args: STYLE(verbose|lab|min)  PATH(full|base)  MODEL(full|short)  WANT_STATUS(0|1)  WANT_EFFORT(0|1)
 build() {
   local style=$1 pm=$2 mm=$3 ws=$4 we=$5
   local p m c pp sepj sepp
@@ -132,20 +133,26 @@ build() {
   [ "$mm" = full ] && m="$model_full" || m="$model_short"
   local -a C=() P=()
 
-  if [ "$style" = lab ]; then
+  if [ "$style" = verbose ] || [ "$style" = lab ]; then
+    local lP lB lS lM lE lC
+    if [ "$style" = verbose ]; then
+      lP="Project:"; lB="Branch:"; lS="Status:"; lM="Model:"; lE="Effort:"; lC="Context:"
+    else
+      lP="P:"; lB="B:"; lS="S:"; lM="M:"; lE="E:"; lC="C:"
+    fi
     sepj=" ${DIM}›${RESET} "; sepp=" > "
-    C+=("${DIM}P:${RESET} ${CYAN}${p}${RESET}"); P+=("P: ${p}")
+    C+=("${DIM}${lP}${RESET} ${CYAN}${p}${RESET}"); P+=("${lP} ${p}")
     if [ -n "$branch" ]; then
-      c="${DIM}B:${RESET} ${YELLOW}${branch}${RESET}"; pp="B: ${branch}"
-      if [ "$ws" = 1 ] && [ -n "$gstatus" ]; then c+=" ${DIM}S:${RESET} ${WHITE}${gstatus}${RESET}"; pp+=" S: ${gstatus}"; fi
+      c="${DIM}${lB}${RESET} ${YELLOW}${branch}${RESET}"; pp="${lB} ${branch}"
+      if [ "$ws" = 1 ] && [ -n "$gstatus" ]; then c+=" ${DIM}${lS}${RESET} ${WHITE}${gstatus}${RESET}"; pp+=" ${lS} ${gstatus}"; fi
       C+=("$c"); P+=("$pp")
     fi
     if [ -n "$m" ]; then
-      c="${DIM}M:${RESET} ${MAGENTA}${m}${RESET}"; pp="M: ${m}"
-      if [ "$we" = 1 ] && [ -n "$effort" ]; then c+=" ${DIM}E:${RESET} ${BLUE}${effort}${RESET}"; pp+=" E: ${effort}"; fi
+      c="${DIM}${lM}${RESET} ${MAGENTA}${m}${RESET}"; pp="${lM} ${m}"
+      if [ "$we" = 1 ] && [ -n "$effort" ]; then c+=" ${DIM}${lE}${RESET} ${BLUE}${effort}${RESET}"; pp+=" ${lE} ${effort}"; fi
       C+=("$c"); P+=("$pp")
     fi
-    [ -n "$ctx" ] && { C+=("${DIM}C:${RESET} ${CTX_COLOR}${ctx}${RESET}"); P+=("C: ${ctx}"); }
+    [ -n "$ctx" ] && { C+=("${DIM}${lC}${RESET} ${CTX_COLOR}${ctx}${RESET}"); P+=("${lC} ${ctx}"); }
   else
     sepj=" ${DIM}|${RESET} "; sepp=" | "
     C+=("${CYAN}${p}${RESET}"); P+=("${p}")
@@ -172,6 +179,7 @@ width=${COLUMNS:-80}
 # Ladder, richest first: pick the first that fits $width; otherwise fall through to the floor.
 best=""
 for spec in \
+  "verbose full full 1 1" \
   "lab full full 1 1" \
   "lab base short 1 1" \
   "min base short 1 1" \

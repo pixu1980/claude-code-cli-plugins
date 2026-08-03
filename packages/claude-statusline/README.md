@@ -9,11 +9,12 @@ Re-evaluated on every render, adapting to the current terminal width (`$COLUMNS`
 Degradation ladder, richest first — the first form that fits the terminal width wins:
 
 ```
-1  P: Projects/my-app › B: main S: !1 › M: Opus 4.8 (1M context) E: xHigh › C: 150k/1M (15%)
-2  P: my-app › B: main S: !1 › M: Opus 4.8 E: xHigh › C: 150k/1M (15%)
-3  my-app | main !1 | Opus 4.8 - xHigh | 150k/1M (15%)
-4  my-app | main | Opus 4.8 - xHigh | 150k/1M (15%)
-5  my-app | Opus 4.8 | 150k/1M (15%)          (floor)
+1  Project: Projects/my-app › Branch: main Status: !1 › Model: Opus 4.8 (1M context) Effort: xHigh › Context: 150k/1M (15%)
+2  P: Projects/my-app › B: main S: !1 › M: Opus 4.8 (1M context) E: xHigh › C: 150k/1M (15%)
+3  P: my-app › B: main S: !1 › M: Opus 4.8 E: xHigh › C: 150k/1M (15%)
+4  my-app | main !1 | Opus 4.8 - xHigh | 150k/1M (15%)
+5  my-app | main | Opus 4.8 - xHigh | 150k/1M (15%)
+6  my-app | Opus 4.8 | 150k/1M (15%)          (floor)
 ```
 
 - Directory: path under `~/Projects` (prefix stripped) or `~`-relative, plus basename.
